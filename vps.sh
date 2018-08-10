@@ -49,6 +49,13 @@ zsh_theme() {
   sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"powerlevel9k\/powerlevel9k\"/g' ~/.zshrc
   # Add zsh-autosuggestions
   sed -i 's/  git /  git zsh-autosuggestions/g' ~/.zshrc
+  echo "
+	POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time php_version ip)
+	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir rbenv vcs )
+	POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
+	DISABLE_AUTO_TITLE="true"
+  " >> ~/.zshrc
 }
 
 
