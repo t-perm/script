@@ -45,19 +45,8 @@ zsh_theme() {
 
   echo -n -e "Install zsh-powerlevel9k"
   git clone https://github.com/bhilburn/powerlevel9k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel9k
-  echo "
-	ZSH_THEME="powerlevel9k/powerlevel9k"
-	
-	plugins=(
-	  git zsh-autosuggestions
-	)
-	
-	POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time php_version ip)
-	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir rbenv vcs )
-	POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
-	DISABLE_AUTO_TITLE="true"
-  " >> ~/.zshrc
+  # Change theme to powerlevel9k
+  sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"powerlevel9k\/powerlevel9k\"/g' ~/.zshrc
 }
 
 
