@@ -38,6 +38,7 @@ zsh(){
   echo -n -e "Install oh-my-zsh"
   sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
   show_menus
+  read_options
 }
 
 zsh_theme() {
@@ -60,6 +61,7 @@ zsh_theme() {
 	DISABLE_AUTO_TITLE="true"
   " >> ~/.zshrc
   show_menus
+  read_options
 }
 
 
