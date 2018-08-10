@@ -28,7 +28,6 @@ show_menus() {
 aptgetupdate() {
 	echo -n -e "Running apt-get-update"
   apt-get update
-  show_menus
 }
 
 zsh(){
@@ -37,8 +36,6 @@ zsh(){
 
   echo -n -e "Install oh-my-zsh"
   sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
-  show_menus
-  read_options
 }
 
 zsh_theme() {
@@ -53,15 +50,12 @@ zsh_theme() {
 	plugins=(
 	  git zsh-autosuggestions
 	)
-	source ~/oh-my-zsh.sh
 	POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time php_version ip)
 	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir rbenv vcs )
 	POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
 	DISABLE_AUTO_TITLE="true"
   " >> ~/.zshrc
-  show_menus
-  read_options
 }
 
 
