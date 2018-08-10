@@ -1,5 +1,5 @@
 #!/bin/bash
-# A menu driven shell script sample template from mt 5
+# A menu driven shell script sample template from mt 6
 ## ----------------------------------
 # Step #1: Define variables
 # ----------------------------------
