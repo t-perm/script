@@ -47,6 +47,8 @@ zsh_theme() {
   git clone https://github.com/bhilburn/powerlevel9k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel9k
   # Change theme to powerlevel9k
   sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"powerlevel9k\/powerlevel9k\"/g' ~/.zshrc
+  # Add zsh-autosuggestions
+  sed -i 's/  git /  git zsh-autosuggestions/g' ~/.zshrc
 }
 
 
