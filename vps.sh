@@ -35,6 +35,8 @@ zsh(){
   apt install zsh
   echo -n -e "Install oh-my-zsh"
   sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+  
+  echo -n -e "\nInstall zsh and oh-my-zsh is done"
 }
 zsh_theme() {
   echo -n -e "Install zsh-autosuggestions"
@@ -52,12 +54,17 @@ zsh_theme() {
 	POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
 	DISABLE_AUTO_TITLE="true"
   " >> ~/.zshrc
+  
+  echo -n -e "\nInstall zsh-powerlevel9k and zsh-autosuggestions is done.
+  Please make sure add zsh-autosuggestions to plugins `vim ~/.zshrc`"
 }
 
 install_nginx(){
   echo -n -e "Install nginx"
   add-apt-repository -y ppa:nginx/development && apt-get update
   apt-get -y install nginx
+  
+  echo -n -e "\nInstall nginx is done"
 }
 
 install_php_72(){
@@ -67,6 +74,7 @@ install_php_72(){
   apt-get -y install php7.2
   apt-get -y install php7.2-fpm php7.2-curl php7.2-gd php7.2-json php7.2-mysql php7.2-sqlite3 php7.2-pgsql php7.2-bz2 php7.2-mbstring php7.2-soap php7.2-xml php7.2-zip
   
+  echo -n -e "\nInstall php 7.2 is done"
 }
 
 install_mysql(){
@@ -77,10 +85,13 @@ install_mysql(){
 	mysql_install_db
 	service mysql start
 	mysql_secure_installation
+	
+	echo -n -e "\nInstall mysql is done"
 }
 
 add_vhost_nginx(){
 	echo -n -e "Add  vhost nginx"
+	
 	read -p "Write the host name, eg. google:" HOST;
 	read -p "Write the 1st level domain name without starting dot '.', eg. com.au:" DOMAIN;
 	mkdir -p /var/www/vhosts/$HOST.$DOMAIN/web
@@ -146,19 +157,25 @@ add_vhost_nginx(){
 	  #      add_header Strict-Transport-Security "max-age=31536000" always;
 
 	}" >> /etc/nginx/sites-available/$HOST.$DOMAIN
-ln -s /etc/nginx/sites-available/$HOST.$DOMAIN /etc/nginx/sites-enabled/$HOST.$DOMAIN
-service nginx restart ; systemctl status nginx.service
+	
+  ln -s /etc/nginx/sites-available/$HOST.$DOMAIN /etc/nginx/sites-enabled/$HOST.$DOMAIN
+  service nginx restart ; systemctl status nginx.service
+  echo -n -e "Add  vhost nginx is done"
 }
 
 install_let_s_encrypt_ssl(){
 	echo -n -e "Install let's encrypt ssl"
+	
 	git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
 	service nginx stop
 	/opt/letsencrypt/certbot-auto certonly --standalone
 	
-	echo -n -e "Cấu hình Nginx"
+	echo -n -e "Install ssl Nginx"
+	
 	mkdir /etc/nginx/ssl/
-	openssl dhparam 2048 > /etc/nginx/ssl/dhparam.pem	
+	openssl dhparam 2048 > /etc/nginx/ssl/dhparam.pem
+	
+	echo "openssl dhparam 2048 > /etc/nginx/ssl/dhparam.pem is done"
 }
 
 read_options(){
