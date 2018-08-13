@@ -44,8 +44,12 @@ zsh_theme() {
   echo -n -e "Install zsh-powerlevel9k"
   git clone https://github.com/bhilburn/powerlevel9k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel9k
   # Change theme to powerlevel9k
+  echo "Change theme to powerlevel9k" 
+  
   sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"powerlevel9k\/powerlevel9k\"/g' ~/.zshrc
   # Add zsh-autosuggestions
+  
+  echo "Add zsh-autosuggestions" 
   sed -i 's/  git /  git zsh-autosuggestions/g' ~/.zshrc
   echo "
 	POWERLEVEL9K_PROMPT_ON_NEWLINE=true
@@ -55,8 +59,7 @@ zsh_theme() {
 	DISABLE_AUTO_TITLE="true"
   " >> ~/.zshrc
   
-  echo -n -e "\nInstall zsh-powerlevel9k and zsh-autosuggestions is done.
-  Please make sure add zsh-autosuggestions to plugins `vim ~/.zshrc`"
+  echo -n -e "\nInstall zsh-powerlevel9k and zsh-autosuggestions is done. Please make sure add zsh-autosuggestions to plugins `vim ~/.zshrc`"
 }
 
 install_nginx(){
