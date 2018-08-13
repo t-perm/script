@@ -90,5 +90,10 @@ trap '' SIGINT SIGQUIT SIGTSTP
 # -----------------------------------
 # Step #4: Main logic - infinite loop
 # ------------------------------------
+while true
+do
+
   show_menus
   read_options
+done
+
