@@ -86,6 +86,108 @@ install_mysql(){
 	mysql_secure_installation
 }
 
+add_vhost_nginx(){
+	echo -n -e "Add  vhost nginx"
+	
+	read -p "Write the host name, eg. google:" HOST;
+read -p "Write the 1st level domain name without starting dot (.), eg. com.au:" DOMAIN;
+
+mkdir -p /var/www/vhosts/$HOST.$DOMAIN/web
+mkdir -p /var/www/vhosts/$HOST.$DOMAIN/logs
+mkdir -p /var/www/vhosts/$HOST.$DOMAIN/ssl
+
+groupadd $HOST
+useradd -g $HOST -d /var/www/vhosts/$HOST.$DOMAIN $HOST
+passwd $HOST
+
+chown -R $HOST:$HOST /var/www/vhosts/$HOST.$DOMAIN
+chmod -R 0775 /var/www/vhosts/$HOST.$DOMAIN
+
+touch /etc/php/7.2/fpm/pool.d/$HOST.$DOMAIN.conf
+
+echo "[$HOST]
+user = $HOST
+group = $HOST
+listen = /run/php/php7.2-fpm-$HOST.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+chdir = /" >> /etc/php/7.2/fpm/pool.d/$HOST.$DOMAIN.conf
+
+service php7.2-fpm restart
+ps aux | grep $HOST
+
+touch /etc/nginx/sites-available/$HOST.$DOMAIN
+
+echo "server {
+	listen 80;
+	server_name $HOST.$DOMAIN;
+	location / {
+		return 301 http://www.$HOST.$DOMAIN$request_uri;
+	}
+}
+server {
+	listen 80;
+	# SSL configuration
+  #
+  # listen 443 ssl http2;
+  # listen [::]:443 ssl http2;
+	
+	
+	root /var/www/vhosts/$HOST.$DOMAIN/web;
+	index index.php index.html index.htm;
+	server_name www.$DOMAIN;
+	include /etc/nginx/conf.d/server/1-common.conf;
+	access_log /var/www/vhosts/$HOST.$DOMAIN/logs/access.log;
+	error_log /var/www/vhosts/$HOST.$DOMAIN/logs/error.log warn;
+	location ~ \.php$ {
+		try_files \$uri \$uri/ /index.php?$args;
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		fastcgi_pass unix:/var/run/php/php7.2-fpm-$HOST.sock;
+		fastcgi_index index.php;
+		fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+		include fastcgi_params;
+	}
+	# ssl_certificate /etc/letsencrypt/live/hocvps.com/fullchain.pem;
+	# ssl_certificate_key /etc/letsencrypt/live/hocvps.com/privkey.pem;
+	# ssl_protocols TLSv1 TLSv1.1 TLSv1.2; 
+	# ssl_prefer_server_ciphers on; 
+	# ssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+
+        # Improve HTTPS performance with session resumption
+  #      ssl_session_cache shared:SSL:50m;
+  #      ssl_session_timeout 1d;
+
+        # DH parameters
+  #      ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+        # Enable HSTS
+  #      add_header Strict-Transport-Security "max-age=31536000" always;
+
+}" >> /etc/nginx/sites-available/$HOST.$DOMAIN
+
+ln -s /etc/nginx/sites-available/$HOST.$DOMAIN /etc/nginx/sites-enabled/$HOST.$DOMAIN
+service nginx restart ; systemctl status nginx.service
+}
+
+install_let_s_encrypt_ssl(){
+	echo -n -e "Install let's encrypt ssl"
+	git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
+	service nginx stop
+	/opt/letsencrypt/certbot-auto certonly --standalone
+	
+	echo -n -e "Cấu hình Nginx"
+	mkdir /etc/nginx/ssl/
+	openssl dhparam 2048 > /etc/nginx/ssl/dhparam.pem
+	
+	
+}
+
 # read input from the keyboard and take a action
 # invoke the one() when the user select 1 from the menu option.
 # invoke the two() when the user select 2 from the menu option.
@@ -101,6 +203,8 @@ read_options(){
     4) install_nginx ;;
     5) install_php_72 ;;
     6) install_mysql ;;
+    7) install_let_s_encrypt_ssl ;;
+    8) add_vhost_nginx ;;
     quit)clear && exit 0;;
     *) echo -e "${RED}Can not match with any selected${STD}" && sleep 1
   esac
