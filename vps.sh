@@ -19,7 +19,7 @@ show_menus() {
   echo "1. Run apt-get update"
   echo "2. Install zsh"
   echo "3. Install zsh theme and zsh-autosuggestions"
-  echo "7. Install mysql"
+  echo "4. Install Nginx"
   echo "quit.  Exit
   "
 }
@@ -58,20 +58,12 @@ zsh_theme() {
   " >> ~/.zshrc
 }
 
-
-# function to display menus
-show_menus() {
-  clear
-  echo "----------------------------------------------------------------------------------"
-  echo -e "                      ${RED}M A I N - M E N U${STD}"
-  echo "----------------------------------------------------------------------------------"
-  echo "1. Run apt-get update"
-  echo "2. Install zsh"
-  echo "3. Install zsh theme and zsh-autosuggestions"
-  echo "7. Install mysql"
-  echo "quit.  Exit
-  "
+install_nginx(){
+  echo -n -e "Install nginx"
+  add-apt-repository -y ppa:nginx/development && apt-get update
+  apt-get -y install nginx
 }
+
 # read input from the keyboard and take a action
 # invoke the one() when the user select 1 from the menu option.
 # invoke the two() when the user select 2 from the menu option.
@@ -84,7 +76,7 @@ read_options(){
     1) aptgetupdate ;;
     2) zsh ;;
     3) zsh_theme ;;
-    4) four ;;
+    4) install_nginx ;;
     quit)clear && exit 0;;
     *) echo -e "${RED}Can not match with any selected${STD}" && sleep 1
   esac
