@@ -12,7 +12,7 @@ STD='\033[0;0;39m'
 
 # function to display menus
 show_menus() {
-  echo "\n----------------------------------------------------------------------------------"
+  echo  -n -e  "----------------------------------------------------------------------------------"
   echo -e "                      ${RED}M A I N - M E N U${STD}"
   echo "----------------------------------------------------------------------------------"
   echo "1. Run apt-get update"
@@ -49,7 +49,7 @@ zsh_theme() {
   sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"powerlevel9k\/powerlevel9k\"/g' ~/.zshrc
   # Add zsh-autosuggestions
   
-  echo "Add zsh-autosuggestions" 
+  echo -n -e "Add zsh-autosuggestions" 
   sed -i 's/  git/  git zsh-autosuggestions/g' ~/.zshrc
   echo "
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
@@ -171,7 +171,8 @@ add_vhost_nginx(){
 	}" >> /etc/nginx/sites-available/$HOST.$DOMAIN
 	
   ln -s /etc/nginx/sites-available/$HOST.$DOMAIN /etc/nginx/sites-enabled/$HOST.$DOMAIN
-  service nginx restart ; systemctl status nginx.service
+  nginx -t
+  service nginx restart
   echo -n -e "Add  vhost nginx is done"
 }
 
