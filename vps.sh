@@ -24,28 +24,21 @@ show_menus() {
   echo "7. Install let's encrypt ssl"
   echo "8. Add vhost nginx"
   echo "Type quit or exit to shut down script"
-  "
 }
-
 
 aptgetupdate() {
 	echo -n -e "Running apt-get-update"
   apt-get update
 }
-
 zsh(){
   echo -n -e "Install zsh and "
   apt install zsh
-
   echo -n -e "Install oh-my-zsh"
   sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
 }
-
 zsh_theme() {
-	
   echo -n -e "Install zsh-autosuggestions"
   git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-
   echo -n -e "Install zsh-powerlevel9k"
   git clone https://github.com/bhilburn/powerlevel9k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel9k
   # Change theme to powerlevel9k
@@ -69,8 +62,8 @@ install_nginx(){
 
 install_php_72(){
   echo -n -e "Install php7.2"
-  
-	add-apt-repository -y ppa:ondrej/php && apt-get update
+
+  add-apt-repository -y ppa:ondrej/php && apt-get update
   apt-get -y install php7.2
   apt-get -y install php7.2-fpm php7.2-curl php7.2-gd php7.2-json php7.2-mysql php7.2-sqlite3 php7.2-pgsql php7.2-bz2 php7.2-mbstring php7.2-soap php7.2-xml php7.2-zip
   
@@ -88,81 +81,71 @@ install_mysql(){
 
 add_vhost_nginx(){
 	echo -n -e "Add  vhost nginx"
-	
 	read -p "Write the host name, eg. google:" HOST;
 	read -p "Write the 1st level domain name without starting dot '.', eg. com.au:" DOMAIN;
+	mkdir -p /var/www/vhosts/$HOST.$DOMAIN/web
+	mkdir -p /var/www/vhosts/$HOST.$DOMAIN/logs
+	mkdir -p /var/www/vhosts/$HOST.$DOMAIN/ssl
+	groupadd $HOST
+	useradd -g $HOST -d /var/www/vhosts/$HOST.$DOMAIN $HOST
+	passwd $HOST
+	chown -R $HOST:$HOST /var/www/vhosts/$HOST.$DOMAIN
+	chmod -R 0775 /var/www/vhosts/$HOST.$DOMAIN
+	touch /etc/php/7.2/fpm/pool.d/$HOST.$DOMAIN.conf
+	echo "[$HOST]
+	user = $HOST
+	group = $HOST
+	listen = /run/php/php7.2-fpm-$HOST.sock
+	listen.owner = www-data
+	listen.group = www-data
+	php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+	php_admin_flag[allow_url_fopen] = off
+	pm = dynamic
+	pm.max_children = 5
+	pm.start_servers = 2
+	pm.min_spare_servers = 1
+	pm.max_spare_servers = 3
+	chdir = /" >> /etc/php/7.2/fpm/pool.d/$HOST.$DOMAIN.conf
+	service php7.2-fpm restart
+	ps aux | grep $HOST
+	touch /etc/nginx/sites-available/$HOST.$DOMAIN
+	echo "server {
+		listen 80;
+		# SSL configuration
+	  #
+	  # listen 443 ssl http2;
+	  # listen [::]:443 ssl http2;
+		
+		
+		root /var/www/vhosts/$HOST.$DOMAIN/web;
+		index index.php index.html index.htm;
+		server_name www.$DOMAIN;
+		include /etc/nginx/conf.d/server/1-common.conf;
+		access_log /var/www/vhosts/$HOST.$DOMAIN/logs/access.log;
+		error_log /var/www/vhosts/$HOST.$DOMAIN/logs/error.log warn;
+		location ~ \.php$ {
+			try_files \$uri \$uri/ /index.php?$args;
+			fastcgi_pass unix:/var/run/php/php7.2-fpm-$HOST.sock;
+			fastcgi_index index.php;
+			fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+			include fastcgi_params;
+		}
+		# ssl_certificate /etc/letsencrypt/live/hocvps.com/fullchain.pem;
+		# ssl_certificate_key /etc/letsencrypt/live/hocvps.com/privkey.pem;
+		# ssl_protocols TLSv1 TLSv1.1 TLSv1.2; 
+		# ssl_prefer_server_ciphers on; 
+		# ssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
 
-mkdir -p /var/www/vhosts/$HOST.$DOMAIN/web
-mkdir -p /var/www/vhosts/$HOST.$DOMAIN/logs
-mkdir -p /var/www/vhosts/$HOST.$DOMAIN/ssl
+	        # Improve HTTPS performance with session resumption
+	  #      ssl_session_cache shared:SSL:50m;
+	  #      ssl_session_timeout 1d;
 
-groupadd $HOST
-useradd -g $HOST -d /var/www/vhosts/$HOST.$DOMAIN $HOST
-passwd $HOST
+	        # DH parameters
+	  #      ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+	        # Enable HSTS
+	  #      add_header Strict-Transport-Security "max-age=31536000" always;
 
-chown -R $HOST:$HOST /var/www/vhosts/$HOST.$DOMAIN
-chmod -R 0775 /var/www/vhosts/$HOST.$DOMAIN
-
-touch /etc/php/7.2/fpm/pool.d/$HOST.$DOMAIN.conf
-
-echo "[$HOST]
-user = $HOST
-group = $HOST
-listen = /run/php/php7.2-fpm-$HOST.sock
-listen.owner = www-data
-listen.group = www-data
-php_admin_value[disable_functions] = exec,passthru,shell_exec,system
-php_admin_flag[allow_url_fopen] = off
-pm = dynamic
-pm.max_children = 5
-pm.start_servers = 2
-pm.min_spare_servers = 1
-pm.max_spare_servers = 3
-chdir = /" >> /etc/php/7.2/fpm/pool.d/$HOST.$DOMAIN.conf
-
-service php7.2-fpm restart
-ps aux | grep $HOST
-
-touch /etc/nginx/sites-available/$HOST.$DOMAIN
-
-echo "server {
-	listen 80;
-	# SSL configuration
-  #
-  # listen 443 ssl http2;
-  # listen [::]:443 ssl http2;
-	
-	
-	root /var/www/vhosts/$HOST.$DOMAIN/web;
-	index index.php index.html index.htm;
-	server_name www.$DOMAIN;
-	include /etc/nginx/conf.d/server/1-common.conf;
-	access_log /var/www/vhosts/$HOST.$DOMAIN/logs/access.log;
-	error_log /var/www/vhosts/$HOST.$DOMAIN/logs/error.log warn;
-	location ~ \.php$ {
-		try_files \$uri \$uri/ /index.php?$args;
-		fastcgi_pass unix:/var/run/php/php7.2-fpm-$HOST.sock;
-		fastcgi_index index.php;
-		fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-		include fastcgi_params;
-	}
-	# ssl_certificate /etc/letsencrypt/live/hocvps.com/fullchain.pem;
-	# ssl_certificate_key /etc/letsencrypt/live/hocvps.com/privkey.pem;
-	# ssl_protocols TLSv1 TLSv1.1 TLSv1.2; 
-	# ssl_prefer_server_ciphers on; 
-	# ssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
-
-        # Improve HTTPS performance with session resumption
-  #      ssl_session_cache shared:SSL:50m;
-  #      ssl_session_timeout 1d;
-
-        # DH parameters
-  #      ssl_dhparam /etc/nginx/ssl/dhparam.pem;
-        # Enable HSTS
-  #      add_header Strict-Transport-Security "max-age=31536000" always;
-
-}" >> /etc/nginx/sites-available/$HOST.$DOMAIN
-
+	}" >> /etc/nginx/sites-available/$HOST.$DOMAIN
 ln -s /etc/nginx/sites-available/$HOST.$DOMAIN /etc/nginx/sites-enabled/$HOST.$DOMAIN
 service nginx restart ; systemctl status nginx.service
 }
@@ -196,19 +179,15 @@ read_options(){
     *) echo -e "${RED}Can not match with any selected${STD}" && sleep 1
   esac
 }
-
 # ----------------------------------------------
 # Step #3: Trap CTRL+C, CTRL+Z and quit singles
 # ----------------------------------------------
 trap '' SIGINT SIGQUIT SIGTSTP
-
 # -----------------------------------
 # Step #4: Main logic - infinite loop
 # ------------------------------------
 while true
 do
-
   show_menus
   read_options
 done
-
