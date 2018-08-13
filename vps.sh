@@ -95,7 +95,7 @@ install_mysql(){
 add_vhost_nginx(){
 	echo -n -e "Add  vhost nginx"
 	
-	read -p "Write the host name, eg. google:" HOST;
+	read -p "Write the host name, eg. deployer, capistrano:" HOST;
 	read -p "Write the 1st level domain name without starting dot '.', eg. com.au:" DOMAIN;
 	
 	echo "Mkdir web - logs - ssl\n"
