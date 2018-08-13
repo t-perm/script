@@ -16,6 +16,7 @@ show_menus() {
   echo -e "                      ${RED}M A I N - M E N U${STD}"
   echo "----------------------------------------------------------------------------------"
   echo "1. Run apt-get update"
+  echo "1.1 Run ssh-keygen"
   echo "2. Install zsh"
   echo "3. Install zsh theme and zsh-autosuggestions"
   echo "4. Install Nginx"
@@ -199,12 +200,17 @@ let_s_encrypt_ssl_helper(){
 	echo -n -e "To add more domain please run `/opt/letsencrypt/certbot-auto -d lis_domain` Example aa.com,bb.com"
 }
 
+ssh_keygen(){
+  ssh-keygen -t rsa -b 2048
+}
+
 read_options(){
   local choice
   echo " "
   read -p "Enter choice:" choice
   case $choice in
     1) aptgetupdate ;;
+    1.1) ssh_keygen ;;
     2) zsh ;;
     3) zsh_theme ;;
     4) install_nginx ;;
