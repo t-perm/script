@@ -106,10 +106,12 @@ add_vhost_nginx(){
 	
 	echo "Create user\n"
 	groupadd $HOST
+	if ![ `id -u $HOST 2>/dev/null || echo -1` -ge 0 ]; then 
+		echo "Add user\n"
+		useradd -g $HOST -d /var/www/vhosts/$HOST.$DOMAIN $HOST
+		passwd $HOST
+	fi
 	
-	echo "Add user\n"
-	useradd -g $HOST -d /var/www/vhosts/$HOST.$DOMAIN $HOST
-	passwd $HOST
 	chown -R $HOST:$HOST /var/www/vhosts/$HOST.$DOMAIN
 	chmod -R 0775 /var/www/vhosts/$HOST.$DOMAIN
 	touch /etc/php/7.2/fpm/pool.d/$HOST.$DOMAIN.conf
