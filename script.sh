@@ -70,7 +70,35 @@ install_nginx(){
   echo -n -e "Install nginx"
   add-apt-repository -y ppa:nginx/development && apt-get update
   apt-get -y install nginx
-  
+  touch /etc/nginx/sites-available gzip.conf
+  echo "
+gzip on;
+gzip_disable "msie6";
+
+gzip_vary on;
+gzip_proxied any;
+gzip_comp_level 6;
+gzip_buffers 16 8k;
+gzip_http_version 1.1;
+gzip_types  text/plain
+            text/css
+            application/json
+            application/javascript
+            application/x-javascript
+            text/html
+            text/xml
+            application/xml
+            application/xml+rss
+            text/javascript
+            image/svg+xml
+            application/vnd.ms-fontobject
+            application/x-font-ttf
+            font/opentype
+            application/font-sfnt
+            application/x-font-otf
+            font/otf
+            ;
+" >> ~/.zshrc
   echo -n -e "\nInstall nginx is done\n"
 }
 
@@ -171,7 +199,7 @@ add_vhost_nginx(){
                         fastcgi_param DOCUMENT_ROOT $realpath_root;
                 }
 		
-		# include /etc/nginx/sites-available/gzip.conf;
+		include /etc/nginx/sites-available/gzip.conf;
 		
 		# ssl_certificate /etc/letsencrypt/live/hocvps.com/fullchain.pem;
 		# ssl_certificate_key /etc/letsencrypt/live/hocvps.com/privkey.pem;
