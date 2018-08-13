@@ -70,7 +70,7 @@ install_nginx(){
   echo -n -e "Install nginx"
   add-apt-repository -y ppa:nginx/development && apt-get update
   apt-get -y install nginx
-  touch /etc/nginx/sites-available gzip.conf
+  touch /etc/nginx/sites-available/gzip.conf
   echo "
 gzip on;
 gzip_disable "msie6";
@@ -98,7 +98,7 @@ gzip_types  text/plain
             application/x-font-otf
             font/otf
             ;
-" >> ~/.zshrc
+" >> /etc/nginx/sites-available/gzip.conf
   echo -n -e "\nInstall nginx is done\n"
 }
 
