@@ -12,7 +12,6 @@ STD='\033[0;0;39m'
 
 # function to display menus
 show_menus() {
-  clear
   echo "----------------------------------------------------------------------------------"
   echo -e "                      ${RED}M A I N - M E N U${STD}"
   echo "----------------------------------------------------------------------------------"
@@ -23,7 +22,8 @@ show_menus() {
   echo "5. Install Php 7.2"
   echo "6. Install Mysql"
   echo "7. Install let's encrypt ssl"
-  echo "quit.  Exit
+  echo "8. Add vhost nginx"
+  echo "Type quit or exit to shut down script"
   "
 }
 
@@ -206,6 +206,7 @@ read_options(){
     7) install_let_s_encrypt_ssl ;;
     8) add_vhost_nginx ;;
     quit)clear && exit 0;;
+    exit)clear && exit 0;;
     *) echo -e "${RED}Can not match with any selected${STD}" && sleep 1
   esac
 }
