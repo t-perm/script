@@ -22,7 +22,8 @@ show_menus() {
   echo "5. Install Php 7.2"
   echo "6. Install Mysql"
   echo "7. Install let's encrypt ssl"
-  echo "8. Add vhost nginx"
+  echo "8. Let's encrypt helper"
+  echo "9. Add vhost nginx"
   echo "Type quit or exit to shut down script"
 }
 
@@ -191,6 +192,11 @@ install_let_s_encrypt_ssl(){
 	echo "openssl dhparam 2048 > /etc/nginx/ssl/dhparam.pem is done"
 }
 
+let_s_encrypt_ssl_helper(){
+	echo -n -e "To auto renew ssl please add crontab `30 2 * * * /opt/letsencrypt/certbot-auto renew --pre-hook 'service nginx stop' --post-hook 'service nginx start' >> /var/log/le-renew.log`"	
+	echo -n -e "To add more domain please run `/opt/letsencrypt/certbot-auto -d lis_domain` Example aa.com,bb.com"
+}
+
 read_options(){
   local choice
   echo " "
@@ -203,7 +209,8 @@ read_options(){
     5) install_php_72 ;;
     6) install_mysql ;;
     7) install_let_s_encrypt_ssl ;;
-    8) add_vhost_nginx ;;
+    8) let_s_encrypt_ssl_helper ;;
+    9) add_vhost_nginx ;;
     quit)clear && exit 0;;
     exit)clear && exit 0;;
     *) echo -e "${RED}Can not match with any selected${STD}" && sleep 1
