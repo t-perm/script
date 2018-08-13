@@ -12,7 +12,7 @@ STD='\033[0;0;39m'
 
 # function to display menus
 show_menus() {
-  echo  -n -e  "----------------------------------------------------------------------------------"
+  echo -n -e  "----------------------------------------------------------------------------------"
   echo -e "                      ${RED}M A I N - M E N U${STD}"
   echo "----------------------------------------------------------------------------------"
   echo "1. Run apt-get update"
@@ -37,7 +37,7 @@ zsh(){
   echo -n -e "Install oh-my-zsh"
   sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
   
-  echo -n -e "\nInstall zsh and oh-my-zsh is done"
+  echo -n -e "\nInstall zsh and oh-my-zsh is done\n"
 }
 zsh_theme() {
   echo -n -e "Install zsh-autosuggestions"
@@ -45,7 +45,7 @@ zsh_theme() {
   echo -n -e "Install zsh-powerlevel9k"
   git clone https://github.com/bhilburn/powerlevel9k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel9k
   # Change theme to powerlevel9k
-  echo "Change theme to powerlevel9k" 
+  echo "\nChange theme to powerlevel9k\n" 
   
   sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"powerlevel9k\/powerlevel9k\"/g' ~/.zshrc
   # Add zsh-autosuggestions
@@ -60,7 +60,7 @@ POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
 DISABLE_AUTO_TITLE="true"
 " >> ~/.zshrc
   
-  echo -n -e "\nInstall zsh-powerlevel9k and zsh-autosuggestions is done. Please make sure add zsh-autosuggestions to plugins `vim ~/.zshrc`"
+  echo -n -e "\nInstall zsh-powerlevel9k and zsh-autosuggestions is done. Please make sure add zsh-autosuggestions to plugins `vim ~/.zshrc`\n"
 }
 
 install_nginx(){
@@ -68,7 +68,7 @@ install_nginx(){
   add-apt-repository -y ppa:nginx/development && apt-get update
   apt-get -y install nginx
   
-  echo -n -e "\nInstall nginx is done"
+  echo -n -e "\nInstall nginx is done\n"
 }
 
 install_php_72(){
@@ -78,7 +78,7 @@ install_php_72(){
   apt-get -y install php7.2
   apt-get -y install php7.2-fpm php7.2-curl php7.2-gd php7.2-json php7.2-mysql php7.2-sqlite3 php7.2-pgsql php7.2-bz2 php7.2-mbstring php7.2-soap php7.2-xml php7.2-zip
   
-  echo -n -e "\nInstall php 7.2 is done"
+  echo -n -e "\nInstall php 7.2 is done\n"
 }
 
 install_mysql(){
@@ -90,7 +90,7 @@ install_mysql(){
 	service mysql start
 	mysql_secure_installation
 	
-	echo -n -e "\nInstall mysql is done"
+	echo -n -e "\nInstall mysql is done\n"
 }
 
 add_vhost_nginx(){
@@ -107,7 +107,7 @@ add_vhost_nginx(){
 	
 	echo "Create user\n"
 	groupadd $HOST
-	if ![[ `id -u $HOST 2>/dev/null || echo -1` -ge 0 ]]; then 
+	if ! [[ `id -u $HOST 2>/dev/null || echo -1` -ge 0 ]]; then 
 		echo "Add user\n"
 		useradd -g $HOST -d /var/www/vhosts/$HOST.$DOMAIN $HOST
 		passwd $HOST
@@ -174,7 +174,7 @@ add_vhost_nginx(){
   ln -s /etc/nginx/sites-available/$HOST.$DOMAIN /etc/nginx/sites-enabled/$HOST.$DOMAIN
   nginx -t
   service nginx restart
-  echo -n -e "Add  vhost nginx is done"
+  echo -n -e "\nAdd  vhost nginx is done\n"
 }
 
 install_let_s_encrypt_ssl(){
@@ -189,7 +189,7 @@ install_let_s_encrypt_ssl(){
 	mkdir /etc/nginx/ssl/
 	openssl dhparam 2048 > /etc/nginx/ssl/dhparam.pem
 	
-	echo "openssl dhparam 2048 > /etc/nginx/ssl/dhparam.pem is done"
+	echo "\nopenssl dhparam 2048 > /etc/nginx/ssl/dhparam.pem is done\n"
 }
 
 let_s_encrypt_ssl_helper(){
