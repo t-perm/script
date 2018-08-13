@@ -240,8 +240,8 @@ install_let_s_encrypt_ssl(){
 }
 
 let_s_encrypt_ssl_helper(){
-	echo -n -e "To auto renew ssl please add crontab 30 2 * * * /opt/letsencrypt/certbot-auto renew --pre-hook 'service nginx stop' --post-hook 'service nginx start'"	
-	echo -n -e "To add more domain please run `/opt/letsencrypt/certbot-auto -d lis_domain` Example aa.com,bb.com\n"
+	echo -n -e "To auto renew ssl please add: crontab 30 2 * * * /opt/letsencrypt/certbot-auto renew --pre-hook 'service nginx stop' --post-hook 'service nginx start'"	
+	echo -n -e "To add more domain please run: /opt/letsencrypt/certbot-auto -d lis_domain Example aa.com,bb.com\n"
 }
 
 ssh_keygen(){
