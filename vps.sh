@@ -52,12 +52,12 @@ zsh_theme() {
   echo "Add zsh-autosuggestions" 
   sed -i 's/  git/  git zsh-autosuggestions/g' ~/.zshrc
   echo "
-	POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time php_version ip)
-	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir rbenv vcs )
-	POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
-	DISABLE_AUTO_TITLE="true"
-  " >> ~/.zshrc
+POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time php_version ip)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir rbenv vcs )
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=4
+DISABLE_AUTO_TITLE="true"
+" >> ~/.zshrc
   
   echo -n -e "\nInstall zsh-powerlevel9k and zsh-autosuggestions is done. Please make sure add zsh-autosuggestions to plugins `vim ~/.zshrc`"
 }
