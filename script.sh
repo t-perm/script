@@ -160,13 +160,19 @@ add_vhost_nginx(){
 		# include /etc/nginx/conf.d/server/1-common.conf;
 		access_log /var/www/vhosts/$HOST.$DOMAIN/logs/access.log;
 		error_log /var/www/vhosts/$HOST.$DOMAIN/logs/error.log warn;
-		location ~ \.php$ {
-			try_files \$uri \$uri/ /index.php?\$query_string;
-			fastcgi_pass unix:/var/run/php/php7.2-fpm-$HOST.sock;
-			fastcgi_index index.php;
-			fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-			include fastcgi_params;
-		}
+		location / {
+                        try_files $uri $uri/ /index.php?$query_string;
+                }
+                location ~ \.php$ {
+                        #try_files $uri $uri/ /index.php?;
+                        fastcgi_pass unix:/var/run/php/php7.2-fpm-deployer.sock;
+                        include snippets/fastcgi-php.conf;
+                        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+                        fastcgi_param DOCUMENT_ROOT $realpath_root;
+                }
+		
+		# include /etc/nginx/sites-available/gzip.conf;
+		
 		# ssl_certificate /etc/letsencrypt/live/hocvps.com/fullchain.pem;
 		# ssl_certificate_key /etc/letsencrypt/live/hocvps.com/privkey.pem;
 		# ssl_protocols TLSv1 TLSv1.1 TLSv1.2; 
@@ -206,8 +212,8 @@ install_let_s_encrypt_ssl(){
 }
 
 let_s_encrypt_ssl_helper(){
-	echo -n -e "To auto renew ssl please add crontab `30 2 * * * /opt/letsencrypt/certbot-auto renew --pre-hook 'service nginx stop' --post-hook 'service nginx start' >> /var/log/le-renew.log`"	
-	echo -n -e "To add more domain please run `/opt/letsencrypt/certbot-auto -d lis_domain` Example aa.com,bb.com"
+	echo -n -e "To auto renew ssl please add crontab 30 2 * * * /opt/letsencrypt/certbot-auto renew --pre-hook 'service nginx stop' --post-hook 'service nginx start'"	
+	echo -n -e "To add more domain please run `/opt/letsencrypt/certbot-auto -d lis_domain` Example aa.com,bb.com\n"
 }
 
 ssh_keygen(){
