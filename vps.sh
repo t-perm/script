@@ -175,15 +175,9 @@ install_let_s_encrypt_ssl(){
 	
 	echo -n -e "Cấu hình Nginx"
 	mkdir /etc/nginx/ssl/
-	openssl dhparam 2048 > /etc/nginx/ssl/dhparam.pem
-	
-	
+	openssl dhparam 2048 > /etc/nginx/ssl/dhparam.pem	
 }
 
-# read input from the keyboard and take a action
-# invoke the one() when the user select 1 from the menu option.
-# invoke the two() when the user select 2 from the menu option.
-# Exit when user the user select 3 form the menu option.
 read_options(){
   local choice
   echo " "
