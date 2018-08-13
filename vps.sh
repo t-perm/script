@@ -141,7 +141,7 @@ add_vhost_nginx(){
 		root /var/www/vhosts/$HOST.$DOMAIN/web;
 		index index.php index.html index.htm;
 		server_name www.$DOMAIN;
-		include /etc/nginx/conf.d/server/1-common.conf;
+		# include /etc/nginx/conf.d/server/1-common.conf;
 		access_log /var/www/vhosts/$HOST.$DOMAIN/logs/access.log;
 		error_log /var/www/vhosts/$HOST.$DOMAIN/logs/error.log warn;
 		location ~ \.php$ {
