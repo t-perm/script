@@ -50,7 +50,7 @@ zsh_theme() {
   # Add zsh-autosuggestions
   
   echo "Add zsh-autosuggestions" 
-  sed -i 's/  git /  git zsh-autosuggestions/g' ~/.zshrc
+  sed -i 's/  git/  git zsh-autosuggestions/g' ~/.zshrc
   echo "
 	POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time php_version ip)
