@@ -97,10 +97,17 @@ add_vhost_nginx(){
 	
 	read -p "Write the host name, eg. google:" HOST;
 	read -p "Write the 1st level domain name without starting dot '.', eg. com.au:" DOMAIN;
+	
+	echo "Mkdir web - logs - ssl\n"
+	
 	mkdir -p /var/www/vhosts/$HOST.$DOMAIN/web
 	mkdir -p /var/www/vhosts/$HOST.$DOMAIN/logs
 	mkdir -p /var/www/vhosts/$HOST.$DOMAIN/ssl
+	
+	echo "Create user\n"
 	groupadd $HOST
+	
+	echo "Add user\n"
 	useradd -g $HOST -d /var/www/vhosts/$HOST.$DOMAIN $HOST
 	passwd $HOST
 	chown -R $HOST:$HOST /var/www/vhosts/$HOST.$DOMAIN
