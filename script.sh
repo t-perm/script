@@ -50,8 +50,10 @@ zsh_theme() {
   sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"powerlevel9k\/powerlevel9k\"/g' ~/.zshrc
   # Add zsh-autosuggestions
   
-  echo -n -e "Add zsh-autosuggestions" 
+  echo -n -e "\n Add zsh-autosuggestions\n" 
+  
   sed -i 's/  git/  git zsh-autosuggestions/g' ~/.zshrc
+  
   echo "
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time php_version ip)
