@@ -20,7 +20,7 @@ show_menus() {
   echo "2. Install zsh"
   echo "3. Install zsh theme and zsh-autosuggestions"
   echo "4. Install Nginx"
-  echo "5. Install Php 7.2"
+  echo "5. Install Php 7.2 and Composer"
   echo "6. Install Mysql"
   echo "7. Install let's encrypt ssl"
   echo "8. Let's encrypt helper"
@@ -82,6 +82,16 @@ install_php_72(){
   apt-get -y install php7.2-fpm php7.2-curl php7.2-gd php7.2-json php7.2-mysql php7.2-sqlite3 php7.2-pgsql php7.2-bz2 php7.2-mbstring php7.2-soap php7.2-xml php7.2-zip
   
   echo -n -e "\nInstall php 7.2 is done\n"
+  
+  echo -n -e "\nInstall Composer\n"
+  
+  curl -sS https://getcomposer.org/installer | php
+  chmod +x composer.phar
+  mv composer.phar /usr/local/bin/composer
+  composer -V
+  
+  echo -n -e "\nInstall Composer is done\n"
+  
 }
 
 install_mysql(){
