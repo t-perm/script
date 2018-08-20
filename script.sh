@@ -45,14 +45,9 @@ zsh_theme() {
   git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
   echo -n -e "Install zsh-powerlevel9k"
   git clone https://github.com/bhilburn/powerlevel9k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel9k
-  # Change theme to powerlevel9k
-  echo "\nChange theme to powerlevel9k\n" 
-  
+  # Change theme to powerlevel9k  
   sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"powerlevel9k\/powerlevel9k\"/g' ~/.zshrc
   # Add zsh-autosuggestions
-  
-  echo -n -e "\n Add zsh-autosuggestions\n" 
-  
   sed -i 's/  git/  git zsh-autosuggestions/g' ~/.zshrc
   
   echo "
