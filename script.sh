@@ -25,7 +25,7 @@ show_menus() {
   echo "7. Install let's encrypt ssl"
   echo "8. Let's encrypt helper"
   echo "9. Add vhost nginx"
-  echo "Type quit or exit to shut down script"
+  echo "Type quit or e or q to shut down script"
 }
 
 aptgetupdate() {
@@ -132,84 +132,59 @@ install_mysql(){
 add_vhost_nginx(){
 	echo -n -e "Add  vhost nginx"
 	
-	read -p "Write the host name, eg. deployer, capistrano:" HOST;
-	read -p "Write the 1st level domain name without starting dot '.', eg. com.au:" DOMAIN;
+	read -p "Enter location store website example /var/www/html " HOST;
+	read -p "Write the 1st level domain name without starting dot" DOMAIN;
 	
 	echo "Mkdir web - logs - ssl\n"
 	
-	mkdir -p /var/www/vhosts/$HOST.$DOMAIN/web
-	mkdir -p /var/www/vhosts/$HOST.$DOMAIN/logs
-	mkdir -p /var/www/vhosts/$HOST.$DOMAIN/ssl
+	mkdir -p $HOST.$DOMAIN/web
+	mkdir -p $HOST.$DOMAIN/logs
+	mkdir -p $HOST.$DOMAIN/ssl
 	
-	echo "Create user\n"
-	groupadd $HOST
-	if ! [[ `id -u $HOST 2>/dev/null || echo -1` -ge 0 ]]; then 
-		echo "Add user\n"
-		useradd -g $HOST -d /var/www/vhosts/$HOST.$DOMAIN $HOST
-		passwd $HOST
-	fi
-	
-	chown -R $HOST:$HOST /var/www/vhosts/$HOST.$DOMAIN
-	chmod -R 0775 /var/www/vhosts/$HOST.$DOMAIN
-	touch /etc/php/7.2/fpm/pool.d/$HOST.$DOMAIN.conf
-	echo "[$HOST]
-	user = $HOST
-	group = $HOST
-	listen = /run/php/php7.2-fpm-$HOST.sock
-	listen.owner = www-data
-	listen.group = www-data
-	php_admin_value[disable_functions] = exec,passthru,shell_exec,system
-	php_admin_flag[allow_url_fopen] = off
-	pm = dynamic
-	pm.max_children = 5
-	pm.start_servers = 2
-	pm.min_spare_servers = 1
-	pm.max_spare_servers = 3
-	chdir = /" >> /etc/php/7.2/fpm/pool.d/$HOST.$DOMAIN.conf
-	service php7.2-fpm restart
-	ps aux | grep $HOST
-	touch /etc/nginx/sites-available/$HOST.$DOMAIN
-	echo "server {
+	touch /etc/nginx/sites-available/$DOMAIN
+	echo "
+	server {
 		listen 80;
-		# SSL configuration
-	  #
-	  # listen 443 ssl http2;
-	  # listen [::]:443 ssl http2;
-		
-		
-		root /var/www/vhosts/$HOST.$DOMAIN/web;
-		index index.php index.html index.htm;
-		server_name www.$DOMAIN;
-		# include /etc/nginx/conf.d/server/1-common.conf;
-		access_log /var/www/vhosts/$HOST.$DOMAIN/logs/access.log;
-		error_log /var/www/vhosts/$HOST.$DOMAIN/logs/error.log warn;
+		listen [::]:80;
+
+		#listen 443 ssl http2;
+		#listen [::]:443 ssl http2;
+		#ssl_certificate /etc/letsencrypt/live/sample/fullchain.pem;
+		#ssl_certificate_key /etc/letsencrypt/live/sample/privkey.pem;
+		#ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+		#ssl_prefer_server_ciphers on;
+		#ssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+
+		#ssl_session_cache shared:SSL:50m;
+		#ssl_session_timeout 1d;
+		#ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+		#add_header Strict-Transport-Security "max-age=31536000" always;
+
+		root $HOST.$DOMAIN/web;
+		index index.php index.html index.htm index.nginx-debian.html;
+
+
+		access_log $HOST.$DOMAIN/logs/access.log;
+		error_log $HOST.$DOMAIN/logs/error.log warn;
+		server_name www.$DOMAIN, $DOMAIN;
+
 		location / {
-                        try_files $uri $uri/ /index.php?$query_string;
-                }
-                location ~ \.php$ {
-                        #try_files $uri $uri/ /index.php?;
-                        fastcgi_pass unix:/var/run/php/php7.2-fpm-deployer.sock;
-                        include snippets/fastcgi-php.conf;
-                        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-                        fastcgi_param DOCUMENT_ROOT $realpath_root;
-                }
-		
-		include /etc/nginx/sites-available/gzip.conf;
-		
-		# ssl_certificate /etc/letsencrypt/live/hocvps.com/fullchain.pem;
-		# ssl_certificate_key /etc/letsencrypt/live/hocvps.com/privkey.pem;
-		# ssl_protocols TLSv1 TLSv1.1 TLSv1.2; 
-		# ssl_prefer_server_ciphers on; 
-		# ssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+			try_files $uri $uri/ /index.php?$query_string;
+		}
+		location ~ \.php$ {
+			include snippets/fastcgi-php.conf;
+			fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+			fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+			fastcgi_param DOCUMENT_ROOT $realpath_root;
+		}
 
-	        # Improve HTTPS performance with session resumption
-	  #      ssl_session_cache shared:SSL:50m;
-	  #      ssl_session_timeout 1d;
+		location ~ /\.ht {
+				deny all;
+		}
 
-	        # DH parameters
-	  #      ssl_dhparam /etc/nginx/ssl/dhparam.pem;
-	        # Enable HSTS
-	  #      add_header Strict-Transport-Security "max-age=31536000" always;
+		location ~ /.well-known {
+				allow all;
+		}
 
 	}" >> /etc/nginx/sites-available/$HOST.$DOMAIN
 	
@@ -259,7 +234,8 @@ read_options(){
     8) let_s_encrypt_ssl_helper ;;
     9) add_vhost_nginx ;;
     quit)clear && exit 0;;
-    exit)clear && exit 0;;
+    e)clear && exit 0;;
+	q)clear && exit 0;;
     *) echo -e "${RED}Can not match with any selected${STD}" && sleep 1
   esac
 }
